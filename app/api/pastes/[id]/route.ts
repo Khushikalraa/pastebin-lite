@@ -1,5 +1,4 @@
-export const runtime = "nodejs";
-import kv from "@/lib/kv";
+import { loadPaste, savePaste } from "@/lib/blob";
 import { nowMs } from "@/lib/time";
 
 export async function GET(
@@ -7,9 +6,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const key = `paste:${id}`;
-
-  const paste = await kv.get<any>(key);
+  const paste = await loadPaste(id);
 
   if (!paste) {
     return Response.json({ error: "Not found" }, { status: 404 });
@@ -26,7 +23,7 @@ export async function GET(
   }
 
   paste.views += 1;
-  await kv.set(key, paste);
+  await savePaste(id, paste);
 
   return Response.json({
     content: paste.content,
