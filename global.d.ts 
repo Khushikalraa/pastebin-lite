@@ -1,0 +1,13 @@
+export {};
+
+declare global {
+  var pastes: Map<
+    string,
+    {
+      content: string;
+      views: number;
+      max_views: number | null;
+      expires_at: number | null;
+    }
+  >;
+}
