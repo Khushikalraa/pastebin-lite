@@ -1,4 +1,5 @@
-import { loadPaste, savePaste } from "@/lib/blob";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";import { loadPaste, savePaste } from "@/lib/blob";
 import { nowMs } from "@/lib/time";
 
 export async function GET(

@@ -1,4 +1,5 @@
-import { nanoid } from "nanoid";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";import { nanoid } from "nanoid";
 import { savePaste } from "@/lib/blob";
 
 export async function POST(req: Request) {
