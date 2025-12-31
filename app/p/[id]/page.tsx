@@ -1,4 +1,4 @@
-import kv from "@/lib/kv";
+export const runtime = "nodejs";
 import { headers } from "next/headers";
 
 export default async function PastePage({
@@ -8,43 +8,23 @@ export default async function PastePage({
 }) {
   const { id } = await params;
 
-  // 🔹 If KV env vars are missing (local dev), fall back to API
-  if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
-    const headersList = await headers();
-    const host = headersList.get("host");
-    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
 
-    const res = await fetch(`${protocol}://${host}/api/pastes/${id}`, {
-      cache: "no-store",
-    });
+  const res = await fetch(`${protocol}://${host}/api/pastes/${id}`, {
+    cache: "no-store",
+  });
 
-    if (!res.ok) {
-      return <h1>404 – Paste not found</h1>;
-    }
-
-    const data = await res.json();
-
-    return (
-      <pre style={{ whiteSpace: "pre-wrap", padding: 20 }}>
-        {data.content}
-      </pre>
-    );
-  }
-
-  // 🔹 Production path (Vercel KV available)
-  const paste = await kv.get<any>(`paste:${id}`);
-
-  if (!paste) {
+  if (!res.ok) {
     return <h1>404 – Paste not found</h1>;
   }
 
-  if (paste.expires_at && Date.now() >= paste.expires_at) {
-    return <h1>404 – Paste expired</h1>;
-  }
+  const data = await res.json();
 
   return (
     <pre style={{ whiteSpace: "pre-wrap", padding: 20 }}>
-      {paste.content}
+      {data.content}
     </pre>
   );
 }
