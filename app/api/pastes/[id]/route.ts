@@ -1,5 +1,4 @@
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";import { loadPaste, savePaste } from "@/lib/blob";
+import { loadPaste, savePaste } from "@/lib/store";
 import { nowMs } from "@/lib/time";
 
 export async function GET(
@@ -7,7 +6,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const paste = await loadPaste(id);
+  const paste = loadPaste(id);
 
   if (!paste) {
     return Response.json({ error: "Not found" }, { status: 404 });
@@ -24,7 +23,7 @@ export async function GET(
   }
 
   paste.views += 1;
-  await savePaste(id, paste);
+  savePaste(id, paste);
 
   return Response.json({
     content: paste.content,
